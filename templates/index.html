@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>replit</title>
+    <link href="static/style.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
+
+   <script type="text/javascript" src="https://unpkg.com/webcam-easy/dist/webcam-easy.min.js"></script>
+
+  </head>
+  <body>
+    <div class="main-bar">
+      
+      <div id="loading-screen" class="loading-screen"></div>
+      <canvas id="canvas" class="d-none"></canvas>
+      <video id="webcam" autoplay playsinline width="640" height="480">
+      </video>
+    </div>
+    <div class="controls"> 
+      <button id = "take-picture">take picture</button>
+      <h5>select gif type:</h5>
+      <select id="typeSelect"class="item-dropdown">
+        <option value="pop-up">pop-up</option>
+        <option value="rainbow">rainbow</option>
+        <option value="rotating">rotating</option>
+        <option value="mirror">mirror</option>
+        <option value="explosion">explosion</option>
+        <option value="filter">filter</option>
+      </select>
+      <div id="after-gif">
+      <h2 id="result-text">Your gif:</h2>
+      <img id = "result" src=""></img>
+      <h2>
+      right click to DOWNLOAD the GIF or drag it off-screen
+      </h2>
+ 
+      </div>
+    </div>
+ 
+    <script src={{ url_for('static', filename='script.js') }}></script>
+  </body>
+  <footer>
+      <a href="https://photoroom.com/">PhotoRoom API<img id="attribution" src="https://www.notion.so/image/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2F60b273ee-5679-46fe-9fa4-9e23c69bf76e%2FPhotoRoom_API_Attribution_Default_English.png?table=block&id=e6606cca-373e-400b-9313-a93734b94fc4&spaceId=3cf2038c-a5d4-4086-ad51-50bf389b3777&width=2000&userId=&cache=v2"></a><a>was used for background removal</a>
+      </footer>
+</html>
