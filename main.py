@@ -17,16 +17,28 @@ hsv_to_rgb = np.vectorize(colorsys.hsv_to_rgb)
 #file imports
 from save_transparent import save_transparent_gif
 
+#root filePath
+# absolute path to this file
+FILE_DIR = os.path.dirname(os.path.abspath(__file__))
+# absolute path to this file's root directory
+PARENT_DIR = str(os.path.join(FILE_DIR, os.pardir) )[:-2]
+
+
+print(PARENT_DIR," server")
 name = "steam" #name of gif to be created
 remove_bg = True #should remove background
 new_api_key = "439a1a4fe50d00ce52fc021a7a2c925ec92002a9" #secret
 start_server = True #start server or make it normally
 key = "123456789ABCD" #hashing key
 
+def makeRelative(path):
+  return PARENT_DIR + path
+
+
 #function to return file path for frame given frame number < 256
 def formatPath(i):
   string = name+"/"+str(key[i//len(key)])+str(key[i%len(key)])+".png"
-  return string
+  return makeRelative(string)
 
 
 
@@ -38,24 +50,24 @@ def process_image(option="pop-up"):
   
   print(option)
   #exits program if no images are in the input folder
-  if(len(os.listdir("gif_templates"))==0):
+  if(len(os.listdir(makeRelative("gif_templates")))==0):
     print("no image available")
     exit(400)
 
   #finds name of input file
-  filename = os.listdir("gif_templates")[0]
+  filename = os.listdir(makeRelative("gif_templates"))[0]
   i=0
   #depreciatedapi_key ="UCqcRFyPsxtDiQR5mwehWtK6"
   
   images=[]
 
   #prevents naming duplicates
-  while os.path.isfile("static/output/"+name+str(i)+".gif"):
+  while os.path.isfile(makeRelative("static/output/"+name+str(i)+".gif")):
     i+=1
   name = name+str(i)
-  if(os.path.isdir(name)):
-    os.removedirs(name)
-  os.mkdir(name)
+  if(os.path.isdir(makeRelative(name))):
+    os.removedirs(makeRelative(name))
+  os.mkdir(makeRelative(name))
 
 
   if remove_bg:
@@ -71,20 +83,20 @@ def process_image(option="pop-up"):
     response = requests.post(
     'https://sdk.photoroom.com/v1/segment',
     headers={'x-api-key': new_api_key},
-    files={'image_file': open("gif_templates/"+filename, 'rb')},
+    files={'image_file': open(makeRelative("gif_templates/"+filename), 'rb')},
     )
 
     if response.status_code == requests.codes.ok:
-        with open('gif_pngs/'+filename, 'wb') as out:
+        with open(makeRelative('gif_pngs/'+filename), 'wb') as out:
             out.write(response.content)
     else:
         print("Error:", response.status_code, response.text)
     #moves input file to used template folder
-    os.rename("gif_templates/"+filename, "used_gif_templates/"+filename)
+    os.rename(makeRelative("gif_templates/"+filename), makeRelative("used_gif_templates/"+filename))
 
   
 
-  im = Image.open("gif_pngs/"+filename)
+  im = Image.open(makeRelative("gif_pngs/"+filename))
 
 
   width, height = im.size
@@ -167,7 +179,7 @@ def process_image(option="pop-up"):
       img.save(formatPath(i))
       i+=1
   else:
-    return "static/output/nonexistent.png"
+    return makeRelative("static/output/nonexistent.png")
 
   #take list of image frames and turns them into gif
   raw =[]
@@ -177,9 +189,9 @@ def process_image(option="pop-up"):
     frame.save(x)
     print(frame)
   step = random.randint(140,180) if option=="pop-up" else random.randint(40,80)
-  save_transparent_gif(raw,step,f'static/output/{name}.gif')          
+  save_transparent_gif(raw,step,makeRelative(f'static/output/{name}.gif'))          
   #remove temporary file_tree
-  shutil.rmtree(name)
+  shutil.rmtree(makeRelative(name))
   print("successfully created gifs")
   return f'static/output/{name}.gif'
 
@@ -191,7 +203,7 @@ def main ():
     app = Flask(__name__)
 
     #server configuration
-    UPLOAD_FOLDER = 'gif_templates'
+    UPLOAD_FOLDER = makeRelative('gif_templates')
     app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
     
     #allows cross origin requests
@@ -222,7 +234,7 @@ def main ():
             if file:
                 #saves file to upload folder and reads blob
                 filename = secure_filename(file.filename)
-                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                file.save(UPLOAD_FOLDER+"/" +filename)
                 print("found file")
                 f = open(UPLOAD_FOLDER+"/"+filename,"rb")
                 blob = f.read()
