@@ -246,9 +246,10 @@ def main ():
         <h1>Upload new File</h1>
         
         ''')
+    port = int(os.environ.get('PORT', 33507))
     app.run( # Starts the site
         host='0.0.0.0',  # EStablishes the host, required for repl to detect the site
-        port=2000 # select the port the machine hosts on.
+        port=port# select the port the machine hosts on.
       )
 
   else:
